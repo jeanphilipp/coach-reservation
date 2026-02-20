@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning{% endblock %}
+
+{% block body %}
+    <h1>Planning (lundi → vendredi)</h1>
+
+    <table class="planning-table">
+        <thead>
+        <tr>
+            <th>Heure</th>
+            {% for day in days %}
+                <th>{{ day|date('D d/m') }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for hour in hours %}
+            <tr>
+                <td>{{ hour }}h - {{ hour + 1 }}h</td>
+                {% for day in days %}
+                    {% set dateKey = day|date('Y-m-d') %}
+                    {% set isBooked = booked[dateKey][hour] is defined %}
+                    <td>
+                        {% if isBooked %}
+                            Indisponible
+                        {% else %}
+                            <a href="{{ path('app_reservation_new', {date: dateKey, hour: hour}) }}">Réserver</a>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
