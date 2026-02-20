@@ -112,4 +112,20 @@ class ReservationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Reservation[]
+     */
+    public function findByUserOrdered(\App\Entity\User $user): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.sessionDate', 'DESC')
+            ->addOrderBy('r.startHour', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }
