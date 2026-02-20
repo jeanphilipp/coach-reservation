@@ -9,4 +9,15 @@
     <p>Heure : {{ hour }}h - {{ hour + 1 }}h</p>
 
     <p>Étape suivante : choisir la discipline + enregistrer en base.</p>
+
+    <form method="post">
+        <label for="discipline">Discipline :</label>
+        <select name="discipline_id" id="discipline" required>
+            {% for discipline in disciplines %}
+                <option value="{{ discipline.id }}">{{ discipline.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Confirmer</button>
+    </form>
 {% endblock %}
