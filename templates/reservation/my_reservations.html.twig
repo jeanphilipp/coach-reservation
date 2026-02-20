@@ -15,6 +15,7 @@
                 <th>Heure</th>
                 <th>Discipline</th>
                 <th>Statut</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -24,6 +25,16 @@
                     <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
                     <td>{{ r.discipline.name }}</td>
                     <td>{{ r.status }}</td>
+                    <td>
+                        {% if r.status == 'PENDING' and r.sessionDate >= date('today') %}
+                            <form method="post" action="{{ path('app_reservation_cancel', {id: r.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel_reservation_' ~ r.id) }}">
+                                <button type="submit">Annuler</button>
+                            </form>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

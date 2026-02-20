@@ -75,5 +75,38 @@ class ReservationController extends AbstractController
         ]);
     }
 
+    #[Route('/reservation/{id}/cancel', name: 'app_reservation_cancel', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function cancel(
+        Reservation $reservation,
+        Request $request,
+        ReservationRepository $reservationRepository
+    ): Response {
+        // Sécurité : vérifier que la réservation appartient bien à l'utilisateur connecté
+        if ($reservation->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // Vérification CSRF
+        if (!$this->isCsrfTokenValid('cancel_reservation_'.$reservation->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $today = new \DateTimeImmutable('today');
+
+        if ($reservation->getSessionDate() < $today) {
+            $this->addFlash('error', 'Impossible d’annuler une réservation passée.');
+            return $this->redirectToRoute('app_my_reservations');
+        }
+
+        // Suppression = libère le créneau
+        $reservationRepository->remove($reservation, true);
+
+        $this->addFlash('success', 'Réservation annulée.');
+        return $this->redirectToRoute('app_my_reservations');
+    }
+
+
+
 
 }
