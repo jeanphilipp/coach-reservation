@@ -34,6 +34,16 @@ class ReservationController extends AbstractController
                 throw $this->createNotFoundException('Discipline not found.');
             }
 
+            $existing = $reservationRepository->findOneBy([
+                'sessionDate' => new \DateTime($date),
+                'startHour' => $hour,
+            ]);
+
+            if ($existing) {
+                $this->addFlash('error', 'Ce créneau est déjà réservé. Choisis un autre horaire.');
+                return $this->redirectToRoute('app_planning');
+            }
+
             $reservation = new Reservation();
             $reservation->setUser($this->getUser());
             $reservation->setDiscipline($discipline);
