@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations{% endblock %}
+
+{% block body %}
+    <h1>Mes réservations</h1>
+
+    {% if reservations is empty %}
+        <p>Vous n'avez aucune réservation.</p>
+    {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Discipline</th>
+                <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in reservations %}
+                <tr>
+                    <td>{{ r.sessionDate|date('Y-m-d') }}</td>
+                    <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
+                    <td>{{ r.discipline.name }}</td>
+                    <td>{{ r.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

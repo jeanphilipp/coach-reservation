@@ -63,4 +63,17 @@ class ReservationController extends AbstractController
             'disciplines' => $disciplines,
         ]);
     }
+
+    #[Route('/mes-reservations', name: 'app_my_reservations', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function myReservations(ReservationRepository $reservationRepository): Response
+    {
+        $reservations = $reservationRepository->findByUserOrdered($this->getUser());
+
+        return $this->render('reservation/my_reservations.html.twig', [
+            'reservations' => $reservations,
+        ]);
+    }
+
+
 }
