@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Coach Sportif - John Doe{% endblock %}
+
+{% block body %}
+    <div class="container-xl">
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-9 col-lg-7">
+
+                <div class="card card-md">
+                    <div class="card-body">
+
+                        <h1 class="card-title mb-1">John Doe</h1>
+                        <div class="text-secondary mb-4">
+                            Coach sportif • Sports de combat • Lyon
+                        </div>
+
+                        <p class="mb-3">
+                            Coach passionné par le <strong>Krav Maga</strong>,
+                            la <strong>Boxe</strong> et le <strong>MMA</strong>.
+                            Je propose des <strong>cours privés</strong> en soirée
+                            à Lyon, du <strong>lundi au vendredi</strong>
+                            entre <strong>17h et 21h</strong>.
+                        </p>
+
+                        <div class="mb-4">
+                            <span class="badge bg-blue-lt me-1">Krav Maga</span>
+                            <span class="badge bg-red-lt me-1">Boxe</span>
+                            <span class="badge bg-green-lt">MMA</span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-primary" href="{{ path('app_planning') }}">
+                                Voir le planning
+                            </a>
+                        </div>
+
+                        <div class="mt-4 text-secondary small">
+                            Site fictif réalisé dans le cadre du titre CDA (Symfony 8).
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

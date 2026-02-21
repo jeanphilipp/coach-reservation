@@ -3,44 +3,69 @@
 {% block title %}Admin - Réservations{% endblock %}
 
 {% block body %}
-    <h1>Réservations en attente</h1>
+    <div class="container-xl">
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 col-lg-10">
 
-    {% if pending is empty %}
-        <p>Aucune réservation en attente.</p>
-    {% else %}
-        <table>
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Client</th>
-                <th>Discipline</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for r in pending %}
-                <tr>
-                    <td>{{ r.sessionDate|date('Y-m-d') }}</td>
-                    <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
-                    <td>{{ r.user.email }}</td>
-                    <td>{{ r.discipline.name }}</td>
-                    <td>{{ r.status }}</td>
-                    <td>
-                        <form method="post" action="{{ path('admin_reservations_accept', {id: r.id}) }}" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('admin_reservation_' ~ r.id) }}">
-                            <button type="submit">Accepter</button>
-                        </form>
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title mb-0">Réservations en attente</h1>
+                    </div>
 
-                        <form method="post" action="{{ path('admin_reservations_refuse', {id: r.id}) }}" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('admin_reservation_' ~ r.id) }}">
-                            <button type="submit">Refuser</button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                    <div class="card-body">
+                        {% if pending is empty %}
+                            <div class="text-secondary">Aucune réservation en attente.</div>
+                        {% else %}
+                            <div class="table-responsive">
+                                <table class="table table-vcenter">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Heure</th>
+                                        <th>Client</th>
+                                        <th>Discipline</th>
+                                        <th>Statut</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for r in pending %}
+                                        <tr>
+                                            <td>{{ r.sessionDate|date('d/m/Y') }}</td>
+                                            <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
+                                            <td>{{ r.user.email }}</td>
+                                            <td>{{ r.discipline.name }}</td>
+                                            <td>
+                                                <span class="badge bg-yellow-lt">{{ r.status }}</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="btn-list flex-nowrap justify-content-end">
+                                                    <form method="post" action="{{ path('admin_reservations_accept', {id: r.id}) }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_reservation_' ~ r.id) }}">
+                                                        <button type="submit" class="btn btn-sm btn-success">
+                                                            Accepter
+                                                        </button>
+                                                    </form>
+
+                                                    <form method="post" action="{{ path('admin_reservations_refuse', {id: r.id}) }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_reservation_' ~ r.id) }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            Refuser
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 {% endblock %}

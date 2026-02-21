@@ -3,41 +3,71 @@
 {% block title %}Mes réservations{% endblock %}
 
 {% block body %}
-    <h1>Mes réservations</h1>
+    <div class="page page-center">
+        <div class="container-xl py-4">  {# plus large que container-tight #}
 
-    {% if reservations is empty %}
-        <p>Vous n'avez aucune réservation.</p>
-    {% else %}
-        <table>
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Discipline</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for r in reservations %}
-                <tr>
-                    <td>{{ r.sessionDate|date('Y-m-d') }}</td>
-                    <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
-                    <td>{{ r.discipline.name }}</td>
-                    <td>{{ r.status }}</td>
-                    <td>
-                        {% if r.status == 'PENDING' and r.sessionDate >= date('today') %}
-                            <form method="post" action="{{ path('app_reservation_cancel', {id: r.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('cancel_reservation_' ~ r.id) }}">
-                                <button type="submit">Annuler</button>
-                            </form>
-                        {% else %}
-                            —
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+            <div class="text-center mb-4">
+                <h1 class="h2">Mes réservations</h1>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+
+                    {% if reservations is empty %}
+                        <p class="text-center text-muted">Vous n'avez aucune réservation.</p>
+                    {% else %}
+
+                        <div class="table-responsive">
+                            <table class="table table-vcenter">
+                                <thead>
+                                <tr>
+                                    <th style="width: 20%">Date</th>
+                                    <th style="width: 15%">Heure</th>
+                                    <th style="width: 25%">Discipline</th>
+                                    <th style="width: 15%">Statut</th>
+                                    <th style="width: 15%">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for r in reservations %}
+                                    <tr>
+                                        <td>{{ r.sessionDate|format_date('long', locale='fr') }}</td>
+                                        <td>{{ r.startHour }}h–{{ r.startHour + 1 }}h</td>
+                                        <td>{{ r.discipline.name }}</td>
+                                        <td>
+                                            {% if r.status == 'PENDING' %}
+                                                <span class="badge bg-yellow">En attente</span>
+                                            {% elseif r.status == 'CONFIRMED' %}
+                                                <span class="badge bg-green">Confirmée</span>
+                                            {% elseif r.status == 'CANCELLED' %}
+                                                <span class="badge bg-red">Annulée</span>
+                                            {% else %}
+                                                {{ r.status }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if r.status == 'PENDING' and r.sessionDate >= date('today') %}
+                                                <form method="post" action="{{ path('app_reservation_cancel', {id: r.id}) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel_reservation_' ~ r.id) }}">
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        Annuler
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}

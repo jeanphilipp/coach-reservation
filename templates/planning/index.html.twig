@@ -3,34 +3,58 @@
 {% block title %}Planning{% endblock %}
 
 {% block body %}
-    <h1>Planning (lundi → vendredi)</h1>
+    <div class="page page-center">
+        <div class="container-xl py-4">
 
-    <table class="planning-table">
-        <thead>
-        <tr>
-            <th>Heure</th>
-            {% for day in days %}
-                <th>{{ day|date('D d/m') }}</th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for hour in hours %}
-            <tr>
-                <td>{{ hour }}h - {{ hour + 1 }}h</td>
-                {% for day in days %}
-                    {% set dateKey = day|date('Y-m-d') %}
-                    {% set isBooked = booked[dateKey][hour] is defined %}
-                    <td>
-                        {% if isBooked %}
-                            Indisponible
-                        {% else %}
-                            <a href="{{ path('app_reservation_new', {date: dateKey, hour: hour}) }}">Réserver</a>
-                        {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <div class="text-center mb-4">
+                <h1 class="h2">Planning (lundi → vendredi)</h1>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-vcenter table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="width: 12%">Heure</th>
+                                {% for day in days %}
+                                    <th class="text-center" style="width: 16%">
+                                        {{ day|date('D d/m') }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for hour in hours %}
+                                <tr>
+                                    <td><strong>{{ hour }}h – {{ hour + 1 }}h</strong></td>
+
+                                    {% for day in days %}
+                                        {% set dateKey = day|date('Y-m-d') %}
+                                        {% set isBooked = booked[dateKey][hour] is defined %}
+
+                                        <td class="text-center">
+                                            {% if isBooked %}
+                                                <span class="badge bg-red">Indisponible</span>
+                                            {% else %}
+                                                <a href="{{ path('app_reservation_new', {date: dateKey, hour: hour}) }}"
+                                                   class="btn btn-primary btn-sm">
+                                                    Réserver
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}

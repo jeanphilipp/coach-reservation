@@ -1,0 +1,40 @@
+<header class="navbar navbar-expand-md navbar-light d-print-none">
+    <div class="container-xl">
+        <a class="navbar-brand" href="{{ path('app_home') }}">
+            John Doe Coach
+        </a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_planning') }}">Planning</a>
+                </li>
+
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_my_reservations') }}">Mes réservations</a>
+                    </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('admin_reservations') }}">Admin</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <div class="d-flex">
+                {% if app.user %}
+                    <span class="navbar-text me-3">{{ app.user.userIdentifier }}</span>
+                    <a class="btn btn-outline-danger" href="{{ path('app_logout') }}">Déconnexion</a>
+                {% else %}
+                    <a class="btn btn-outline-primary me-2" href="{{ path('app_login') }}">Connexion</a>
+                    <a class="btn btn-primary" href="{{ path('app_register') }}">Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
