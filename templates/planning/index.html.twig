@@ -37,7 +37,7 @@
 
                                         <td class="text-center">
                                             {% if isBooked %}
-                                                <span class="badge bg-red">Indisponible</span>
+                                                <span class="badge bg-danger text-white fw-bold">Indisponible</span>
                                             {% else %}
                                                 <a href="{{ path('app_reservation_new', {date: dateKey, hour: hour}) }}"
                                                    class="btn btn-primary btn-sm">
