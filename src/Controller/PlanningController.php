@@ -15,7 +15,7 @@ class PlanningController extends AbstractController
     #[Route('/planning', name: 'app_planning')]
     public function index(Request $request, ReservationRepository $reservationRepository): Response
     {
-        $weekOffset = (int) $request->query->get('week', 0); // -1 / 0 / 1 / ...
+        $weekOffset = max(0, (int) $request->query->get('week', 0)); // 0 / 1 / ...
 
         $today = new DateTimeImmutable('today');
 
