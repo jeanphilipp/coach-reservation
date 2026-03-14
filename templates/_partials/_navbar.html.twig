@@ -1,10 +1,14 @@
 <header class="navbar navbar-expand-md navbar-light d-print-none">
     <div class="container-xl">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
         <a class="navbar-brand" href="{{ path('app_home') }}">
             John Doe Coach
         </a>
 
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" id="navbar-menu">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
@@ -26,12 +30,12 @@
                 {% endif %}
             </ul>
 
-            <div class="d-flex">
+            <div class="d-flex flex-column flex-md-row gap-2 mt-2 mt-md-0">
                 {% if app.user %}
-                    <span class="navbar-text me-3">{{ app.user.userIdentifier }}</span>
+                    <span class="navbar-text me-md-3 mb-2 mb-md-0">{{ app.user.userIdentifier }}</span>
                     <a class="btn btn-outline-danger" href="{{ path('app_logout') }}">Déconnexion</a>
                 {% else %}
-                    <a class="btn btn-outline-primary me-2" href="{{ path('app_login') }}">Connexion</a>
+                    <a class="btn btn-outline-primary" href="{{ path('app_login') }}">Connexion</a>
                     <a class="btn btn-primary" href="{{ path('app_register') }}">Inscription</a>
                 {% endif %}
             </div>
