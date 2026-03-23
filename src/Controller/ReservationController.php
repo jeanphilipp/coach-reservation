@@ -105,8 +105,4 @@ class ReservationController extends AbstractController
         $this->addFlash('success', 'Réservation annulée.');
         return $this->redirectToRoute('app_my_reservations');
     }
-
-
-
-
 }

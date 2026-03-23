@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+    <div class="container-xl py-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="mb-4">Politique de confidentialité (RGPD)</h1>
+
+                <p class="text-secondary mb-4">
+                    Conformément au Règlement Général sur la Protection des Données (RGPD), cette page détaille comment nous traitons vos données personnelles.
+                </p>
+
+                <h2 class="h4 mt-4">1. Données collectées</h2>
+                <p>
+                    Nous collectons uniquement les informations nécessaires à la gestion de vos réservations :
+                    nom, prénom, adresse e-mail.
+                </p>
+
+                <h2 class="h4 mt-4">2. Sécurité et Hachage</h2>
+                <p>
+                    La sécurité de vos données est une priorité. Vos mots de passe ne sont jamais stockés en clair :
+                    ils sont <strong>systématiquement hachés</strong> à l'aide d'algorithmes sécurisés (BCrypt ou Argon2)
+                    avant d'être enregistrés en base de données.
+                </p>
+
+                <h2 class="h4 mt-4">3. Utilisation des données</h2>
+                <p>
+                    Vos données sont utilisées exclusivement pour :
+                    <ul>
+                        <li>La création et la gestion de votre compte utilisateur.</li>
+                        <li>Le suivi de vos réservations de cours (Boxe, MMA, Krav Maga).</li>
+                        <li>Vous envoyer des notifications relatives à vos réservations.</li>
+                    </ul>
+                </p>
+
+                <h2 class="h4 mt-4">4. Vos droits</h2>
+                <p>
+                    Vous disposez d'un droit d'accès, de rectification et de suppression de vos données.
+                    Vous pouvez à tout moment demander la <strong>suppression de votre compte</strong> directement
+                    depuis votre espace personnel.
+                </p>
+
+                <h2 class="h4 mt-4">5. Conservation des données</h2>
+                <p>
+                    Vos données sont conservées tant que votre compte est actif. En cas d'inactivité prolongée (3 ans),
+                    vos données personnelles seront supprimées.
+                </p>
+
+                <div class="mt-5">
+                    <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

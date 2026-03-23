@@ -24,8 +24,23 @@
 
     <div class="page-wrapper">
         <div class="page-body">
+            <div class="container-xl">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }} alert-dismissible shadow-sm border-0" role="alert">
+                            <div class="d-flex">
+                                <div>
+                                    {{ message }}
+                                </div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
             {% block body %}{% endblock %}
         </div>
+        {% include '_partials/_footer.html.twig' %}
     </div>
 
 </div>
