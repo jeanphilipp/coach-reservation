@@ -18,19 +18,32 @@
                     {{ form_start(registrationForm) }}
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.email) }}
-                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(registrationForm.email) }}
+                        {{ form_row(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
-                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(registrationForm.plainPassword) }}
+                        {{ form_row(registrationForm.lastName, {'attr': {'class': 'form-control'}}) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_row(registrationForm.agreeTerms) }}
+                        {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_row(registrationForm.plainPassword, {
+                            'label': 'Mot de passe',
+                            'attr': {'class': 'form-control'}
+                        }) }}
+                        <small class="form-hint">
+                            Pour votre sécurité, votre mot de passe sera <strong>systématiquement haché</strong> avant d'être enregistré.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_row(registrationForm.agreeTerms, {
+                            'label': 'J’accepte que mes données soient traitées conformément à la <a href="' ~ path('app_privacy_policy') ~ '" target="_blank">politique de confidentialité</a>',
+                            'label_html': true
+                        }) }}
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">

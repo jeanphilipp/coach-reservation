@@ -19,8 +19,15 @@ class PlanningController extends AbstractController
 
         $today = new DateTimeImmutable('today');
 
-        // Lundi de la semaine courante, puis décalage de X semaines
-        $monday = $today->modify('monday this week')->modify(sprintf('%+d week', $weekOffset));
+        // Si on est samedi (6) ou dimanche (7), on affiche la prochaine semaine ouvrée
+        if ((int) $today->format('N') >= 6) {
+            $monday = $today->modify('next monday');
+        } else {
+            $monday = $today->modify('monday this week');
+        }
+
+        // Décalage éventuel vers les semaines suivantes
+        $monday = $monday->modify(sprintf('+%d week', $weekOffset));
 
         $days = [];
         for ($i = 0; $i < 5; $i++) {
@@ -29,8 +36,8 @@ class PlanningController extends AbstractController
 
         $hours = [17, 18, 19, 20];
 
-        $weekStart = $monday; // lundi 00:00
-        $weekEnd = $monday->add(new DateInterval('P5D')); // samedi 00:00
+        $weekStart = $monday;
+        $weekEnd = $monday->add(new DateInterval('P5D'));
 
         $reservations = $reservationRepository->createQueryBuilder('r')
             ->andWhere('r.sessionDate >= :start')

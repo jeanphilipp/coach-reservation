@@ -68,6 +68,25 @@
                 </div>
             </div>
 
+            <div class="card mt-5 border-danger shadow-sm">
+                <div class="card-status-top bg-danger"></div>
+                <div class="card-body">
+                    <h3 class="card-title text-danger">Zone de danger</h3>
+                    <p class="text-secondary">
+                        Conformément au RGPD, vous pouvez demander la suppression définitive de votre compte et de toutes vos données personnelles (réservations, profil).
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                    <div class="mt-3">
+                        <form method="post" action="{{ path('app_user_delete') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Toutes vos données seront définitivement effacées.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_account' ~ app.user.userIdentifier) }}">
+                            <button type="submit" class="btn btn-outline-danger">
+                                Supprimer mon compte
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock %}
