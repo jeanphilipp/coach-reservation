@@ -5,13 +5,15 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\AppCustomAuthenticator;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -23,7 +25,8 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         Security $security,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        EmailVerifier $emailVerifier
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -38,16 +41,19 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $email = (new Email())
-                ->from('no-reply@example.com')
+            $email = (new TemplatedEmail())
+                ->from(new Address('no-reply@example.com', 'Coach Reservation'))
                 ->to((string) $user->getEmail())
-                ->subject('Création de votre compte')
-                ->text("Bonjour,\n\nVotre compte a bien été créé.\n\nVous pouvez maintenant vous connecter.")
-                ->html('<p>Bonjour,</p><p>Votre compte a bien été créé.</p><p>Vous pouvez maintenant vous connecter.</p>');
+                ->subject('Confirmation de votre email')
+                ->htmlTemplate('registration/confirmation_email.html.twig');
+
+            $emailVerifier->sendEmailConfirmation('app_verify_email', $user, $email);
 
             $mailer->send($email);
 
-            return $security->login($user, AppCustomAuthenticator::class, 'main');
+            $this->addFlash('success', 'Un email de confirmation vous a été envoyé. Vérifiez votre boîte mail avant de vous connecter.');
+
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
