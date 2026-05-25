@@ -40,10 +40,12 @@
                     </div>
 
                     <div class="mb-3">
-                        {{ form_row(registrationForm.agreeTerms, {
-                            'label': 'J’accepte que mes données soient traitées conformément à la <a href="' ~ path('app_privacy_policy') ~ '" target="_blank">politique de confidentialité</a>',
-                            'label_html': true
-                        }) }}
+                        <label class="form-check">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input checkbox-sm'}}) }}
+                            <span class="form-check-label">
+                                J’accepte que mes données soient traitées conformément à la <a href="{{ path('app_privacy_policy') }}" target="_blank">politique de confidentialité</a>
+                            </span>
+                        </label>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">

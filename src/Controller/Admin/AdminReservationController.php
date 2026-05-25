@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 use App\Entity\Reservation;
+use App\Service\ActivityLogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,7 +31,8 @@ class AdminReservationController extends AbstractController
     public function accept(
         Reservation $reservation,
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ActivityLogService $activityLogService
     ): Response {
         if (!$this->isCsrfTokenValid('admin_reservation_'.$reservation->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token.');
@@ -38,6 +40,8 @@ class AdminReservationController extends AbstractController
 
         $reservation->setStatus('ACCEPTED');
         $em->flush();
+
+        $activityLogService->logAction($this->getUser(), 'admin_accepted_reservation', $reservation);
 
         $this->addFlash('success', 'Réservation acceptée.');
         return $this->redirectToRoute('admin_reservations');
@@ -47,13 +51,16 @@ class AdminReservationController extends AbstractController
     public function refuse(
         Reservation $reservation,
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ActivityLogService $activityLogService
     ): Response {
         if (!$this->isCsrfTokenValid('admin_reservation_'.$reservation->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
         // Refus = suppression => le créneau est libéré
+        $activityLogService->logAction($this->getUser(), 'admin_refused_reservation', $reservation);
+
         $em->remove($reservation);
         $em->flush();
 
