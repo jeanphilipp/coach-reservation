@@ -18,20 +18,17 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($this->isCsrfTokenValid('delete_account' . $user->getUserIdentifier(), $request->request->get('_token'))) {
-            // Supprimer les réservations de l'utilisateur d'abord si nécessaire
-            // Dans ce projet, on peut s'appuyer sur l'EntityManager pour tout supprimer
-
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            // Invalider la session
-            $session->invalidate();
-            $this->container->get('security.token_storage')->setToken(null);
-
-            $this->addFlash('success', 'Votre compte et toutes vos données ont été supprimés avec succès.');
+        if (!$this->isCsrfTokenValid('delete_account' . $user->getUserIdentifier(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $session->invalidate();
+        $this->container->get('security.token_storage')->setToken(null);
+
+        $this->addFlash('success', 'Votre compte et toutes vos données ont été supprimés avec succès.');
         return $this->redirectToRoute('app_home');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Repository\DisciplineRepository;
 use App\Repository\ReservationRepository;
+use App\Service\ActivityLogService;
 use DateTimeImmutable;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,14 +21,32 @@ class ReservationController extends AbstractController
     public function new(
         Request $request,
         DisciplineRepository $disciplineRepository,
-        ReservationRepository $reservationRepository
+        ReservationRepository $reservationRepository,
+        ActivityLogService $activityLogService
     ): Response {
         $date = $request->query->get('date');        // YYYY-mm-dd
         $hour = (int) $request->query->get('hour');  // 17/18/19/20
 
+        if (!$date || !\DateTime::createFromFormat('Y-m-d', $date)) {
+            throw $this->createNotFoundException('Date invalide.');
+        }
+
+        if (!in_array($hour, [17, 18, 19, 20], true)) {
+            throw $this->createNotFoundException('Heure invalide.');
+        }
+
+        if (new \DateTime($date) < new \DateTime('today')) {
+            $this->addFlash('error', 'Impossible de réserver un créneau passé.');
+            return $this->redirectToRoute('app_planning');
+        }
+
         $disciplines = $disciplineRepository->findAll();
 
         if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('reservation_new', (string) $request->request->get('_token'))) {
+                throw $this->createAccessDeniedException('Invalid CSRF token.');
+            }
+
             $disciplineId = (int) $request->request->get('discipline_id');
             $discipline = $disciplineRepository->find($disciplineId);
 
@@ -52,7 +72,15 @@ class ReservationController extends AbstractController
             $reservation->setStatus('PENDING');
             $reservation->setCreatedAt(new DateTimeImmutable());
 
-            $reservationRepository->save($reservation, true);
+            try {
+                $reservationRepository->save($reservation, true);
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash('error', 'Ce créneau vient d\'être réservé simultanément. Choisis un autre horaire.');
+                return $this->redirectToRoute('app_planning');
+            }
+
+            // Appel au service NoSQL (Logs)
+            $activityLogService->logAction($this->getUser(), 'reservation_created', $reservation);
 
             return $this->redirectToRoute('app_planning');
         }
@@ -80,11 +108,17 @@ class ReservationController extends AbstractController
     public function cancel(
         Reservation $reservation,
         Request $request,
-        ReservationRepository $reservationRepository
+        ReservationRepository $reservationRepository,
+        ActivityLogService $activityLogService
     ): Response {
         // Sécurité : vérifier que la réservation appartient bien à l'utilisateur connecté
         if ($reservation->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
+        }
+
+        if ($reservation->getStatus() !== 'PENDING') {
+            $this->addFlash('error', 'Seules les réservations en attente peuvent être annulées.');
+            return $this->redirectToRoute('app_my_reservations');
         }
 
         // Vérification CSRF
@@ -100,6 +134,9 @@ class ReservationController extends AbstractController
         }
 
         // Suppression = libère le créneau
+        // Avant de supprimer en SQL, on logue l'action en NoSQL
+        $activityLogService->logAction($this->getUser(), 'reservation_cancelled', $reservation);
+
         $reservationRepository->remove($reservation, true);
 
         $this->addFlash('success', 'Réservation annulée.');

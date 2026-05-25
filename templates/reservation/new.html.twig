@@ -23,6 +23,7 @@
                         </div>
 
                         <form method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reservation_new') }}">
                             <div class="mb-3">
                                 <label for="discipline" class="form-label">Discipline</label>
                                 <select name="discipline_id" id="discipline" class="form-select" required>
